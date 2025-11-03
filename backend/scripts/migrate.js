@@ -7,7 +7,6 @@ const migrate = async () => {
   try {
     logger.info('Running database migrations...');
 
-    // Create products table
     await client.query(`
       CREATE TABLE IF NOT EXISTS products (
         id SERIAL PRIMARY KEY,
@@ -20,13 +19,11 @@ const migrate = async () => {
       );
     `);
 
-    // Add image_url column if it doesn't exist (for existing databases)
     await client.query(`
       ALTER TABLE products 
       ADD COLUMN IF NOT EXISTS image_url TEXT;
     `);
 
-    // Create product_history table
     await client.query(`
       CREATE TABLE IF NOT EXISTS product_history (
         id SERIAL PRIMARY KEY,
@@ -37,7 +34,6 @@ const migrate = async () => {
       );
     `);
 
-    // Create indexes
     await client.query(`
       CREATE INDEX IF NOT EXISTS idx_products_asin ON products(asin);
       CREATE INDEX IF NOT EXISTS idx_products_timestamp ON products(timestamp);

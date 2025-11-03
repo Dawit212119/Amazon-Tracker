@@ -27,10 +27,8 @@ const ProductCard = ({ product, showChange = false }) => {
             loading="lazy"
             crossOrigin="anonymous"
             onError={(e) => {
-              // Try alternative image format or hide
               const originalSrc = e.target.src;
               if (originalSrc && !originalSrc.includes("_AC_")) {
-                // Try adding Amazon image format
                 const newSrc = originalSrc.replace(/\.(jpg|png)$/i, "._AC_.$1");
                 if (newSrc !== originalSrc) {
                   e.target.src = newSrc;

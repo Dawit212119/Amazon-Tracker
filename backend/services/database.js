@@ -119,7 +119,6 @@ export class DatabaseService {
     }
   }
 
-  // Get top price changes (last 24h) or recent products if no changes
   async getTopChanges() {
     const query = `
       WITH latest_prices AS (
@@ -177,7 +176,6 @@ export class DatabaseService {
     }
   }
 
-  // Get products with price drop alerts (>5% in 24h)
   async getPriceAlerts() {
     const query = `
       WITH latest_prices AS (

@@ -7,7 +7,6 @@ const Products = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [priceFilter, setPriceFilter] = useState({ min: "", max: "" });
   const [ratingFilter, setRatingFilter] = useState({ min: "" });
-  // Debounce functionality commented out to avoid multiple requests to Amazon's anti-bot system
   // const [debouncedSearch, setDebouncedSearch] = useState("");
   const [scrapeMsg, setScrapeMsg] = useState("");
   const [scraping, setScraping] = useState(false);
@@ -22,8 +21,8 @@ const Products = () => {
   const { products, loading, error, refetch } = useProducts(
     100,
     true,
-    searchTerm // Use searchTerm directly, no debounce
-  ); // Server-side search
+    searchTerm
+  );
 
   const filteredProducts = products.filter((product) => {
     const matchesPrice =
@@ -35,7 +34,6 @@ const Products = () => {
       !product.rating ||
       product.rating >= parseFloat(ratingFilter.min);
 
-    // Server already applied searchTerm; we only apply price/rating filters client-side
     return matchesPrice && matchesRating;
   });
 
@@ -197,7 +195,6 @@ const Products = () => {
         </div>
       </div>
 
-      {/* Empty search hint */}
       {(!searchTerm || searchTerm.trim().length === 0) && (
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
           <p className="text-blue-800">
@@ -206,14 +203,12 @@ const Products = () => {
         </div>
       )}
 
-      {/* Results count */}
       {searchTerm && (
         <div className="text-sm text-gray-600">
           Showing {filteredProducts.length} of {products.length} products
         </div>
       )}
 
-      {/* Product Grid */}
       {searchTerm && filteredProducts.length === 0 ? (
         <div className="bg-white p-8 rounded-lg shadow-md text-center">
           <p className="text-gray-500 text-lg">

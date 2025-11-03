@@ -6,10 +6,8 @@ import { randomUUID } from 'crypto';
 const runningJobs = new Set();
 
 export const triggerRefresh = async (req, res) => {
-  // Only use keywords provided by user - no defaults
   let keywords = [];
 
-  // Get keywords from request body
   if (req.body && req.body.keywords) {
     if (typeof req.body.keywords === 'string') {
       keywords = req.body.keywords
@@ -21,24 +19,20 @@ export const triggerRefresh = async (req, res) => {
     }
   }
 
-  // Require user to provide keywords - no default fallback
   if (keywords.length === 0) {
     return res.status(400).json({
       error: 'No keywords provided. Please provide at least one keyword to search for.',
     });
   }
 
-  // Generate unique job ID
   const jobId = randomUUID();
   logger.info(`Manual refresh triggered with keywords: ${keywords.join(', ')} (Job ID: ${jobId})`);
 
-  // Create progress tracking
   progressTracker.createJob(jobId, keywords);
   runningJobs.add(jobId);
 
-  // Run ETL asynchronously with custom keywords
   const etlService = new ETLService();
-  etlService.scraper.keywords = keywords; // Override keywords
+  etlService.scraper.keywords = keywords;
 
   // Progress callback
   const progressCallback = (progress) => {

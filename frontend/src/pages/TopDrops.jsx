@@ -12,7 +12,6 @@ const TopDrops = () => {
 
   useEffect(() => {
     fetchData(true);
-    // Auto-refresh every 5 seconds (background refresh, no page blink)
     const interval = setInterval(() => fetchData(false), 5000);
     return () => clearInterval(interval);
   }, []);
@@ -73,7 +72,6 @@ const TopDrops = () => {
         <RefreshButton onRefresh={fetchData} />
       </div>
 
-      {/* Tabs */}
       <div className="border-b border-gray-200">
         <nav className="-mb-px flex space-x-8">
           <button
@@ -99,7 +97,6 @@ const TopDrops = () => {
         </nav>
       </div>
 
-      {/* Top Drops Tab */}
       {activeTab === "drops" && (
         <div>
           {topChanges.length === 0 ? (
@@ -177,7 +174,6 @@ const TopDrops = () => {
         </div>
       )}
 
-      {/* Alerts Tab */}
       {activeTab === "alerts" && (
         <div>
           {alerts.length === 0 ? (

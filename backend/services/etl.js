@@ -16,7 +16,6 @@ export class ETLService {
     this.db = new DatabaseService();
   }
 
-  // Clean and validate product data
   cleanProduct(product) {
     const cleaned = {
       asin: product.asin?.trim().toUpperCase(),
@@ -26,7 +25,6 @@ export class ETLService {
       image_url: product.image_url || null,
     };
 
-    // Validate required fields
     if (!cleaned.asin || cleaned.asin.length !== 10) {
       return null;
     }
@@ -43,7 +41,6 @@ export class ETLService {
     return cleaned;
   }
 
-  // Process and store products
   async processProducts(products) {
     let processed = 0;
     let updated = 0;
@@ -58,19 +55,15 @@ export class ETLService {
           continue;
         }
 
-        // Get existing product to compare price
         const existing = await this.db.getProductByAsin(cleaned.asin);
         const previousPrice = existing ? parseFloat(existing.price) : null;
         const currentPrice = cleaned.price;
 
-        // Upsert product
         await this.db.upsertProduct(cleaned);
         updated++;
 
-        // Always insert history entry
         await this.db.insertHistory(cleaned.asin, cleaned.price, cleaned.rating);
 
-        // Log price changes
         if (previousPrice && previousPrice !== currentPrice) {
           const change = ((currentPrice - previousPrice) / previousPrice) * 100;
           logger.info(
@@ -88,7 +81,6 @@ export class ETLService {
     return { processed, updated, errors };
   }
 
-  // Run full ETL pipeline with progress tracking
   async run(jobId = null, progressCallback = null) {
     const startTime = Date.now();
     logger.info('=== ETL Job Started ===');
@@ -98,11 +90,9 @@ export class ETLService {
       let totalUpdated = 0;
       let totalErrors = 0;
 
-      // Extract: Scrape products page by page and process immediately
       logger.info('Step 1: Extracting data...');
       const allProducts = [];
 
-      // Scrape keyword by keyword, page by page
       for (let keywordIndex = 0; keywordIndex < this.scraper.keywords.length; keywordIndex++) {
         const keyword = this.scraper.keywords[keywordIndex];
 
@@ -114,7 +104,6 @@ export class ETLService {
           });
         }
 
-        // Scrape each page
         const pagesToScrape = Math.min(this.scraper.maxPages, 5);
         for (let page = 1; page <= pagesToScrape; page++) {
           if (progressCallback) {
@@ -128,11 +117,10 @@ export class ETLService {
           const products = await this.scraper.scrapeSearchPage(keyword, page);
 
           if (products.length === 0 && page === 1) {
-            break; // No products found for this keyword
+            break;
           }
 
           if (products.length > 0) {
-            // Process immediately after each page
             const results = await this.processProducts(products);
             totalProcessed += results.processed;
             totalUpdated += results.updated;
@@ -150,7 +138,7 @@ export class ETLService {
             allProducts.push(...products);
           }
 
-          await this.scraper.delay(); // Delay between pages
+          await this.scraper.delay();
         }
       }
 

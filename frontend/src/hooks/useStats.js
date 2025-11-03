@@ -21,7 +21,7 @@ export const useStats = () => {
     };
 
     fetchStats();
-    const interval = setInterval(fetchStats, 60000); // Refresh every minute
+    const interval = setInterval(fetchStats, 60000);
     return () => clearInterval(interval);
   }, []);
 
@@ -43,4 +43,3 @@ export const useStats = () => {
     },
   };
 };
-
