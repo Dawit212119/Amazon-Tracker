@@ -62,3 +62,4 @@ class ProgressTracker {
 }
 
 export const progressTracker = new ProgressTracker();
+

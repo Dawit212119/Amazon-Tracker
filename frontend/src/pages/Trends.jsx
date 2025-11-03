@@ -10,7 +10,6 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import { useProducts } from "../hooks/useProducts";
 import { productService } from "../services/api";
 
 ChartJS.register(
@@ -24,7 +23,7 @@ ChartJS.register(
 );
 
 const Trends = () => {
-  const { products } = useProducts(100);
+  const [products, setProducts] = useState([]); // All tracked products for dropdown
   const [searchInput, setSearchInput] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [selectedAsin, setSelectedAsin] = useState("");
@@ -33,6 +32,28 @@ const Trends = () => {
   const [searchLoading, setSearchLoading] = useState(false);
   const [error, setError] = useState(null);
   const [showResults, setShowResults] = useState(false);
+
+  // Fetch all tracked products for the dropdown
+  useEffect(() => {
+    const fetchAllProducts = async () => {
+      try {
+        const allProducts = await productService.getAllProducts(100);
+        setProducts(allProducts);
+      } catch (err) {
+        console.error("Error fetching all products:", err);
+      }
+    };
+
+    // Fetch on mount
+    fetchAllProducts();
+
+    // Auto-refresh every 5 seconds to get newly scraped products
+    const interval = setInterval(() => {
+      fetchAllProducts();
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const handleSearch = async (query) => {
     if (!query || query.length < 2) {

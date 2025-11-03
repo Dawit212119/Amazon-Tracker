@@ -6,7 +6,15 @@ const dbService = new DatabaseService();
 export const getProducts = async (req, res) => {
   try {
     const limit = parseInt(req.query.limit) || 50;
-    const products = await dbService.getProducts(limit);
+    const q = (req.query.q || '').toString().trim();
+    let products;
+    if (q.length > 0) {
+      products = await dbService.searchProducts(q);
+      // Enforce limit after search to keep consistency
+      products = products.slice(0, limit);
+    } else {
+      products = await dbService.getProducts(limit);
+    }
     res.json(products);
   } catch (error) {
     logger.error('Error in getProducts:', error);

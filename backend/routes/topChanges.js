@@ -7,3 +7,4 @@ router.get('/', productController.getTopChanges);
 
 export default router;
 
+

@@ -68,3 +68,4 @@ Your scraper successfully found **86 products** from:
 4. Set up price alerts for products you care about
 
 The system will automatically scrape hourly (as configured) to track price changes!
+

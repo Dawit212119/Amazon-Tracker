@@ -298,3 +298,4 @@ This project is for educational purposes. Ensure compliance with Amazon's Terms 
 ---
 
 **Built with ❤️ using Node.js, React, and PostgreSQL**
+

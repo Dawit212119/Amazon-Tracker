@@ -30,3 +30,4 @@ const StatCard = ({ title, value, subtitle, icon }) => {
 };
 
 export default StatCard;
+

@@ -11,10 +11,19 @@ const api = axios.create({
 });
 
 export const productService = {
-  getAll: async (limit = 50, search) => {
-    const response = await api.get(
-      `/products/search?limit=${limit}&q=${search}`
-    );
+  getAll: async (limit = 50, search = "") => {
+    const q = (search || "").trim();
+    if (q.length === 0) {
+      return [];
+    }
+    const url = `/products?limit=${limit}&q=${encodeURIComponent(q)}`;
+    const response = await api.get(url);
+    return response.data;
+  },
+
+  getAllProducts: async (limit = 100) => {
+    // Fetch all products without search filter (for dropdowns/lists)
+    const response = await api.get(`/products?limit=${limit}`);
     return response.data;
   },
 

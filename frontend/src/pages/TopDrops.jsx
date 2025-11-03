@@ -11,26 +11,33 @@ const TopDrops = () => {
   const [activeTab, setActiveTab] = useState("drops");
 
   useEffect(() => {
-    fetchData();
-    // Auto-refresh every 5 seconds
-    const interval = setInterval(fetchData, 5000);
+    fetchData(true);
+    // Auto-refresh every 5 seconds (background refresh, no page blink)
+    const interval = setInterval(() => fetchData(false), 5000);
     return () => clearInterval(interval);
   }, []);
 
-  const fetchData = async () => {
-    setLoading(true);
+  const reconcileByAsin = (prev, next) => {
+    const map = new Map(prev.map((i) => [i.asin, i]));
+    return next.map((n) =>
+      map.has(n.asin) ? { ...map.get(n.asin), ...n } : n
+    );
+  };
+
+  const fetchData = async (showLoading = true) => {
+    if (showLoading) setLoading(true);
     setError(null);
     try {
       const [changesData, alertsData] = await Promise.all([
         productService.getTopChanges(),
         productService.getPriceAlerts(),
       ]);
-      setTopChanges(changesData);
-      setAlerts(alertsData);
+      setTopChanges((prev) => reconcileByAsin(prev, changesData));
+      setAlerts((prev) => reconcileByAsin(prev, alertsData));
     } catch (err) {
       setError(err.message);
     } finally {
-      setLoading(false);
+      if (showLoading) setLoading(false);
     }
   };
 
@@ -124,8 +131,8 @@ const TopDrops = () => {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {topChanges.map((change, idx) => (
-                    <tr key={idx} className="hover:bg-gray-50">
+                  {topChanges.map((change) => (
+                    <tr key={change.asin} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-medium text-gray-900">
                           {change.title?.substring(0, 60)}...
@@ -182,9 +189,9 @@ const TopDrops = () => {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {alerts.map((alert, idx) => (
+              {alerts.map((alert) => (
                 <div
-                  key={idx}
+                  key={alert.asin}
                   className="bg-white rounded-lg shadow-md p-6 border-2 border-red-200"
                 >
                   <div className="flex items-center justify-between mb-4">

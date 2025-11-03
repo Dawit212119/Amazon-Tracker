@@ -104,3 +104,4 @@ npm run dev
 
 - Another PostgreSQL instance might be running
 - Check Windows Services for "postgresql" service
+

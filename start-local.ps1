@@ -37,3 +37,4 @@ Write-Host "💚 Health Check: http://localhost:5000/health" -ForegroundColor Cy
 Write-Host ""
 Write-Host "Press Ctrl+C to stop all servers" -ForegroundColor Yellow
 
+
