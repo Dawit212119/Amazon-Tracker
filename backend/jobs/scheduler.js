@@ -8,7 +8,7 @@ dotenv.config();
 let isRunning = false;
 
 export const startScheduler = () => {
-  const schedule = process.env.CRON_SCHEDULE || '0 * * * *'; // Default: hourly
+  const schedule = process.env.CRON_SCHEDULE || '0 * * * *';
 
   logger.info(`Starting scheduler with cron: ${schedule}`);
 
@@ -34,5 +34,3 @@ export const startScheduler = () => {
 
   logger.info('Scheduler started successfully');
 };
-
-

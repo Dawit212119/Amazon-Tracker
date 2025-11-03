@@ -45,7 +45,6 @@ app.use((err, req, res, next) => {
 
 const startServer = async () => {
   try {
-    // Test database connection
     await pool.query('SELECT 1');
     logger.info('Database connection established');
 
@@ -54,7 +53,6 @@ const startServer = async () => {
       logger.info(`Environment: ${process.env.NODE_ENV || 'development'}`);
     });
 
-    // Start scheduler
     startScheduler();
   } catch (error) {
     logger.error('Failed to start server:', error);

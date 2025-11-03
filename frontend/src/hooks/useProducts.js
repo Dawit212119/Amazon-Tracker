@@ -12,7 +12,6 @@ export const useProducts = (
   const [error, setError] = useState(null);
   const refreshIntervalRef = useRef(null);
 
-  // Merge new results into existing list to avoid blink (stale-while-revalidate)
   const reconcileByAsin = (previousList, nextList) => {
     const asinToPrev = new Map(previousList.map((p) => [p.asin, p]));
     const merged = nextList.map((next) => {
@@ -24,7 +23,6 @@ export const useProducts = (
 
   const fetchProducts = async (showLoading = true, replace = false) => {
     try {
-      // If no search term, do not fetch; clear list and stop loading
       if (!searchTerm || searchTerm.trim().length === 0) {
         setProducts([]);
         setLoading(false);
@@ -33,8 +31,6 @@ export const useProducts = (
       }
       if (showLoading) setLoading(true);
       const data = await productService.getAll(limit, searchTerm);
-      // Replace products entirely when search term changes (replace=true)
-      // Merge products only during auto-refresh for the same search term
       setProducts((prev) => (replace ? data : reconcileByAsin(prev, data)));
       setError(null);
     } catch (err) {
@@ -45,7 +41,6 @@ export const useProducts = (
   };
 
   useEffect(() => {
-    // Clear products immediately when search term changes
     if (!searchTerm || searchTerm.trim().length === 0) {
       setProducts([]);
       setLoading(false);
@@ -54,11 +49,9 @@ export const useProducts = (
     }
 
     if (!disableAuto) {
-      // Replace products when search term changes (new search)
       fetchProducts(true, true);
     }
 
-    // Auto-refresh every 3 seconds if enabled
     if (
       !disableAuto &&
       autoRefresh &&
@@ -66,7 +59,7 @@ export const useProducts = (
       searchTerm.trim().length > 0
     ) {
       refreshIntervalRef.current = setInterval(() => {
-        fetchProducts(false, false); // Merge during auto-refresh (same search term)
+        fetchProducts(false, false);
       }, 3000);
     }
 
@@ -81,6 +74,6 @@ export const useProducts = (
     products,
     loading,
     error,
-    refetch: () => fetchProducts(true, true), // Replace on manual refetch
+    refetch: () => fetchProducts(true, true),
   };
 };

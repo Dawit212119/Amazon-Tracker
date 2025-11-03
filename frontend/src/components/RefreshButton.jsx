@@ -9,7 +9,6 @@ const RefreshButton = ({ onRefresh, searchTerm }) => {
   const [keywords, setKeywords] = useState(searchTerm);
 
   const handleRefresh = async () => {
-    // Always require keywords from user - no defaults
     if (!showInput) {
       setShowInput(true);
       setMessage("Please enter keywords to search");
@@ -34,13 +33,11 @@ const RefreshButton = ({ onRefresh, searchTerm }) => {
       setMessage(result.message || "Refresh started!");
       setShowInput(false);
 
-      // Start polling for progress if jobId is returned
       if (result.jobId) {
         pollInterval = setInterval(async () => {
           try {
             const progress = await productService.getProgress(result.jobId);
 
-            // Update message with progress
             if (progress.currentKeyword) {
               const statusMsg = `Scraping "${progress.currentKeyword}" - Page ${
                 progress.currentPage || 1
@@ -48,12 +45,10 @@ const RefreshButton = ({ onRefresh, searchTerm }) => {
               setMessage(statusMsg);
             }
 
-            // Auto-refresh products list as they come in
             if (progress.productsProcessed > 0 && onRefresh) {
               onRefresh();
             }
 
-            // Stop polling if job is complete
             if (progress.completed) {
               if (pollInterval) clearInterval(pollInterval);
               setLoading(false);
@@ -70,7 +65,6 @@ const RefreshButton = ({ onRefresh, searchTerm }) => {
               setTimeout(() => setMessage(""), 5000);
             }
           } catch (error) {
-            // Job might not exist or expired
             if (error.response?.status === 404) {
               if (pollInterval) clearInterval(pollInterval);
               setLoading(false);
@@ -80,9 +74,8 @@ const RefreshButton = ({ onRefresh, searchTerm }) => {
               }
             }
           }
-        }, 2000); // Poll every 2 seconds
+        }, 2000);
       } else if (onRefresh) {
-        // Fallback: refresh after delay if no jobId
         setTimeout(() => {
           onRefresh();
           setMessage("");
@@ -97,7 +90,6 @@ const RefreshButton = ({ onRefresh, searchTerm }) => {
       setLoading(false);
     }
 
-    // Cleanup function
     return () => {
       if (pollInterval) clearInterval(pollInterval);
     };
