@@ -7,7 +7,7 @@ const Products = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [priceFilter, setPriceFilter] = useState({ min: "", max: "" });
   const [ratingFilter, setRatingFilter] = useState({ min: "" });
-  const { products, loading, error, refetch } = useProducts(100, true); // Enable auto-refresh
+  const { products, loading, error, refetch } = useProducts(100, false); // Enable auto-refresh
 
   const filteredProducts = products.filter((product) => {
     const matchesSearch =
@@ -46,7 +46,7 @@ const Products = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center flex-wrap gap-4">
         <h2 className="text-3xl font-bold text-gray-900">All Products</h2>
-        <RefreshButton onRefresh={refetch} />
+        <RefreshButton onRefresh={refetch} searchTerm={searchTerm} />
       </div>
 
       {/* Filters */}

@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { productService } from "../services/api";
 
-const RefreshButton = ({ onRefresh, defaultKeywords = "" }) => {
+const RefreshButton = ({ onRefresh, searchTerm, defaultKeywords = "" }) => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [showInput, setShowInput] = useState(false);
-  const [keywords, setKeywords] = useState(defaultKeywords);
+  const [keywords, setKeywords] = useState(defaultKeywords | searchTerm);
 
   const handleRefresh = async () => {
     // Always require keywords from user - no defaults
