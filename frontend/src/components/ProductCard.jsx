@@ -1,3 +1,5 @@
+import PropTypes from "prop-types";
+
 const ProductCard = ({ product, showChange = false }) => {
   const formatPrice = (price) => {
     return new Intl.NumberFormat("en-US", {
@@ -110,6 +112,19 @@ const ProductCard = ({ product, showChange = false }) => {
       </a>
     </div>
   );
+};
+
+ProductCard.propTypes = {
+  product: PropTypes.shape({
+    image_url: PropTypes.string,
+    title: PropTypes.string.isRequired,
+    price: PropTypes.number.isRequired,
+    price_change: PropTypes.number,
+    rating: PropTypes.number,
+    asin: PropTypes.string.isRequired,
+    timestamp: PropTypes.string,
+  }).isRequired,
+  showChange: PropTypes.bool,
 };
 
 export default ProductCard;

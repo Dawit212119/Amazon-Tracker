@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
+import PropTypes from "prop-types";
 import { productService } from "../services/api";
 
-const RefreshButton = ({ onRefresh, searchTerm, defaultKeywords = "" }) => {
+const RefreshButton = ({ onRefresh, searchTerm }) => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [showInput, setShowInput] = useState(false);
-  const [keywords, setKeywords] = useState(defaultKeywords | searchTerm);
+  const [keywords, setKeywords] = useState(searchTerm);
 
   const handleRefresh = async () => {
     // Always require keywords from user - no defaults
@@ -170,6 +171,10 @@ const RefreshButton = ({ onRefresh, searchTerm, defaultKeywords = "" }) => {
       )}
     </div>
   );
+};
+RefreshButton.propTypes = {
+  onRefresh: PropTypes.func.isRequired,
+  searchTerm: PropTypes.string,
 };
 
 export default RefreshButton;

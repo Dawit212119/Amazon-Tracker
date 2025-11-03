@@ -1,7 +1,11 @@
 import { useState, useEffect, useRef } from "react";
 import { productService } from "../services/api";
 
-export const useProducts = (limit = 50, autoRefresh = false) => {
+export const useProducts = (
+  limit = 50,
+  autoRefresh = false,
+  searchTerm = ""
+) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -10,7 +14,8 @@ export const useProducts = (limit = 50, autoRefresh = false) => {
   const fetchProducts = async (showLoading = true) => {
     try {
       if (showLoading) setLoading(true);
-      const data = await productService.getAll(limit);
+      setProducts([]);
+      const data = await productService.getAll(limit, searchTerm | "");
       setProducts(data);
       setError(null);
     } catch (err) {

@@ -11,8 +11,10 @@ const api = axios.create({
 });
 
 export const productService = {
-  getAll: async (limit = 50) => {
-    const response = await api.get(`/products?limit=${limit}`);
+  getAll: async (limit = 50, search) => {
+    const response = await api.get(
+      `/products/search?limit=${limit}&q=${search}`
+    );
     return response.data;
   },
 
